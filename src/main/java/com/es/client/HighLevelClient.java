@@ -1,7 +1,6 @@
 package com.es.client;
 
 import org.elasticsearch.action.ActionListener;
-import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -9,7 +8,12 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.main.MainResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.After;
 import org.junit.Before;
@@ -20,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author dt 2019/4/10 14:56
@@ -132,6 +137,32 @@ public class HighLevelClient {
 
         Thread.sleep(1000);
 
+    }
+
+    /**
+     * 搜索
+     */
+    @Test
+    public void searchEsData() throws InterruptedException {
+
+        SearchEsRequest searchEsRequest = new SearchEsRequest();
+//        SearchRequest searchRequest = searchEsRequest.getAll();
+//        SearchRequest searchRequest = searchEsRequest.getIndexSearch();
+//        SearchRequest searchRequest = searchEsRequest.getIndexMatch();
+        SearchRequest searchRequest = searchEsRequest.getHighLightEsData();
+
+        restHighLevelClient.searchAsync(searchRequest, new ActionListener<SearchResponse>() {
+            @Override
+            public void onResponse(SearchResponse searchResponse) {
+                System.out.println(searchResponse.toString());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                System.out.println("search 错误, e = "+e.getMessage());
+            }
+        });
+        Thread.sleep(1000);
     }
 
     @After
